@@ -1,2 +1,5 @@
 .DS_STORE
-
+front-end/frontApp
+broker-service/brokerApp
+msgo-infra/db-data
+authentication-service/authApp
