@@ -39,7 +39,7 @@ func (app *Config) HandlerSubmission(w http.ResponseWriter, r *http.Request) {
 	switch requestPayload.Action {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
-	default: 
+	default:
 		app.ErrorJson(w, errors.New("unknown action"))
 
 	}
@@ -49,7 +49,7 @@ func (app *Config) HandlerSubmission(w http.ResponseWriter, r *http.Request) {
 func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	jsondata, _ := json.MarshalIndent(a, "", "\t")
 
-	request, err := http.NewRequest("POST", "http://authenticate-service/authenticate", bytes.NewBuffer(jsondata))
+	request, err := http.NewRequest("POST", "http://authentication-service/authenticate", bytes.NewBuffer(jsondata))
 	if err != nil {
 		app.ErrorJson(w, err)
 		return
