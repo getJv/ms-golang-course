@@ -54,7 +54,7 @@ func (app *Config) logRequest(name, data string) error {
 		Name string `json:"name"`
 		Data string `json:"data"`
 	}
-	entry.name = name
+	entry.Name = name
 	entry.Data = data
 
 	jsondata, _ := json.MarshalIndent(entry, "", "\t")

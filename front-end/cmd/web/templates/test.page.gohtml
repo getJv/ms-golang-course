@@ -48,7 +48,7 @@
             action: "log",
             log: {
                 name: "event",
-                data: "some data log!",
+                data: "Some kind of data",
             }
         }
 
@@ -56,7 +56,7 @@
         headers.append("Content-Type", "application/json");
 
         const body = {
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify(payload),
             headers: headers,
         }
@@ -85,7 +85,7 @@
             action: "auth",
             auth: {
                 email: "admin@example.com",
-                password: "verysecret!",
+                password: "verysecret",
             }
         }
 

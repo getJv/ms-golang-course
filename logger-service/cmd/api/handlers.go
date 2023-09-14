@@ -7,14 +7,13 @@ import (
 
 type JsonPayload struct {
 	Name string `json:"name"`
-	Data string `json:"data "
-	`
+	Data string `json:"data"`
 }
 
 func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 	var requestPayload JsonPayload
 
-	_ = app.ReadJson(w, r, &requestPayload)
+	_ = app.readJSON(w, r, &requestPayload)
 
 	event := data.LogEntry{
 		Name: requestPayload.Name,
@@ -23,7 +22,7 @@ func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 
 	err := app.Models.LogEntry.Insert(event)
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -32,6 +31,6 @@ func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 		Message: "logged",
 	}
 
-	app.WriteJson(w, http.StatusAccepted, resp)
+	app.writeJSON(w, http.StatusAccepted, resp)
 
 }

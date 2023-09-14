@@ -10,7 +10,7 @@ import (
 type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
-	Log    LogPayload  `json:"log ,omitempty"`
+	Log    LogPayload  `json:"log,omitempty"`
 }
 
 type AuthPayload struct {
@@ -20,7 +20,7 @@ type AuthPayload struct {
 
 type LogPayload struct {
 	Name string `json:"name"`
-	Data string `json:"data  "`
+	Data string `json:"data"`
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
@@ -29,16 +29,16 @@ func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
 		Message: "Hit the Broker",
 	}
 
-	_ = app.WriteJson(w, http.StatusOK, payload)
+	_ = app.writeJSON(w, http.StatusOK, payload)
 }
 
 func (app *Config) HandlerSubmission(w http.ResponseWriter, r *http.Request) {
 
 	var requestPayload RequestPayload
 
-	err := app.ReadJson(w, r, &requestPayload)
+	err := app.readJSON(w, r, &requestPayload)
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (app *Config) HandlerSubmission(w http.ResponseWriter, r *http.Request) {
 	case "log":
 		app.logItem(w, requestPayload.Log)
 	default:
-		app.ErrorJson(w, errors.New("unknown action"))
+		app.errorJSON(w, errors.New("unknown action"))
 
 	}
 
@@ -56,12 +56,11 @@ func (app *Config) HandlerSubmission(w http.ResponseWriter, r *http.Request) {
 
 func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	jsondata, _ := json.MarshalIndent(entry, "", "\t")
-
 	logServiceUrl := "http://logger-service/log"
 
 	request, err := http.NewRequest("POST", logServiceUrl, bytes.NewBuffer(jsondata))
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -70,13 +69,13 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusAccepted {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -84,8 +83,7 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	payload.Error = false
 	payload.Message = "Logged"
 
-	app.WriteJson(w, http.StatusAccepted, payload)
-
+	app.writeJSON(w, http.StatusAccepted, payload)
 
 }
 
@@ -94,25 +92,25 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	request, err := http.NewRequest("POST", "http://authentication-service/authenticate", bytes.NewBuffer(jsondata))
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusUnauthorized {
-		app.ErrorJson(w, errors.New("invalid credentials"))
+		app.errorJSON(w, errors.New("invalid credentials"))
 		return
 	}
 
 	if response.StatusCode != http.StatusAccepted {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
@@ -120,12 +118,12 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
-		app.ErrorJson(w, err)
+		app.errorJSON(w, err)
 		return
 	}
 
 	if jsonFromService.Error {
-		app.ErrorJson(w, err, http.StatusUnauthorized)
+		app.errorJSON(w, err, http.StatusUnauthorized)
 		return
 	}
 
@@ -134,6 +132,6 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	payload.Message = "Authenticated"
 	payload.Data = jsonFromService.Data
 
-	app.WriteJson(w, http.StatusAccepted, payload)
+	app.writeJSON(w, http.StatusAccepted, payload)
 
 }
