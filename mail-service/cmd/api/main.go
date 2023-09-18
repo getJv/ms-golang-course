@@ -44,9 +44,9 @@ func createMailer() Mail {
 		Port:         port,
 		Username:     os.Getenv("MAIL_USERNAME"),
 		Password:     os.Getenv("MAIL_PASSWORD"),
-		Encryptation: os.Getenv("MAIL_ENCRYPTION"),
+		Encryption: os.Getenv("MAIL_ENCRYPTION"),
 		FromName:     os.Getenv("MAIL_FROM_NAME"),
-		FromAdress:   os.Getenv("MAIL_FROM_ADDRESS"),
+		FromAddress:   os.Getenv("MAIL_FROM_ADDRESS"),
 	}
 
 	return m

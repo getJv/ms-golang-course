@@ -27,7 +27,7 @@ func (app *Config) SendMail(w http.ResponseWriter, r *http.Request) {
 		Data:    requestPayload.Message,
 	}
 
-	err = app.Mailer.SendSMTPmessage(msg)
+	err = app.Mailer.SendSMTPMessage(msg)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
