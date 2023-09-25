@@ -5,3 +5,4 @@ msgo-infra/db-data
 authentication-service/authApp
 logger-service/loggerServiceApp
 mail-service/mailerApp
+listener-service/listenerApp
